@@ -25,6 +25,7 @@ class DetailViewController: UIViewController, UITableViewDelegate, UITableViewDa
         view.backgroundColor = .white
         initTableView()
         initNavBar()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.reloadData), name: NSNotification.Name(rawValue: "newItemAdded") , object: nil)
     }
     
     func initTableView() {
@@ -39,6 +40,10 @@ class DetailViewController: UIViewController, UITableViewDelegate, UITableViewDa
     func initNavBar() {
         let barButtonItem = UIBarButtonItem.init(barButtonSystemItem: .add, target: self, action: #selector(self.createNewItem))
         self.navigationItem.rightBarButtonItem = barButtonItem
+    }
+    
+    @objc func reloadData(notification: NSNotification?) {
+        tableView?.reloadData()
     }
     
     @objc func createNewItem(_: Any) {
