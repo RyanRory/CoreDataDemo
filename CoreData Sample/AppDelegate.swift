@@ -15,7 +15,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        syncDataFromServer()
         return true
+    }
+    
+    func syncDataFromServer() {
+        let _ = API.getData().done { result in
+            CoreDataHelper.shared.syncFromServerIfNeeded(json: result).done{ updated in
+                print(updated)
+                if updated {
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "didUpdateFromServer"), object: nil)
+                }
+            }
+        }
     }
 
     // MARK: UISceneSession Lifecycle
