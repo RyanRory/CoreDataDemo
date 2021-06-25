@@ -22,7 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func syncDataFromServer() {
         let _ = API.getData().done { result in
             CoreDataHelper.shared.syncFromServerIfNeeded(json: result).done{ updated in
-                print(updated)
                 if updated {
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: "didUpdateFromServer"), object: nil)
                 }
