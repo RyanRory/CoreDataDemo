@@ -5,13 +5,13 @@
 ## Screenshots
 
 #### Home Screen (Purchase Orders)
-![Initialization](https://github.com/RyanRory/CoreDataDemo/blob/main/IMG/init.gif)
+<img src="https://github.com/RyanRory/CoreDataDemo/blob/main/IMG/init.gif" width="30%" height="30%">
 
 #### Add an item to an existing order
-![Add Item](https://github.com/RyanRory/CoreDataDemo/blob/main/IMG/addItem.gif)
+<img src="https://github.com/RyanRory/CoreDataDemo/blob/main/IMG/addItem.gif" width="30%" height="30%">
 
 #### Add a new order
-![Add Order](https://github.com/RyanRory/CoreDataDemo/blob/main/IMG/addOrder.gif)
+<img src="https://github.com/RyanRory/CoreDataDemo/blob/main/IMG/addOrder.gif" width="30%" height="30%">
 
 #### Data Persistence
-![Data Persistence](https://github.com/RyanRory/CoreDataDemo/blob/main/IMG/dataPersistence.gif)
+<img src="https://github.com/RyanRory/CoreDataDemo/blob/main/IMG/dataPersistence.gif" width="30%" height="30%">
