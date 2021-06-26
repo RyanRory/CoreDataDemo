@@ -61,10 +61,17 @@ class NewItemViewController: UIViewController, UITextFieldDelegate {
                 item.quantity = quantity
                 item.lastUpdated = Date()
                 purchaseOrder?.addToItems(item)
+                purchaseOrder?.lastUpdated = item.lastUpdated
+                CoreDataHelper.shared.saveCoreDataContext()
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newItemAdded"), object: nil)
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "purchaseOrdersUpdated"), object: nil)
             }
+            self.dismiss(animated: true, completion: nil)
+        } else {
+            let alert = UIAlertController.init(title: nil, message: "Please enter correct info.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction.init(title: "OK", style: .cancel, handler: nil))
+            self.navigationController?.present(alert, animated: true, completion: nil)
         }
-        self.dismiss(animated: true, completion: nil)
     }
     
     @objc func cancel(_: Any) {

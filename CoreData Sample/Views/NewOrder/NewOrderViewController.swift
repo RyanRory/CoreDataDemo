@@ -22,6 +22,11 @@ class NewOrderViewController: UIViewController, UITableViewDelegate, UITableView
         initTableView()
         initNavBar()
         createNewPurchaseOrder()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.reloadData), name: NSNotification.Name(rawValue: "newItemAdded") , object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "newItemAdded"), object: nil)
     }
     
     func initTableView() {
@@ -43,14 +48,38 @@ class NewOrderViewController: UIViewController, UITableViewDelegate, UITableView
     func createNewPurchaseOrder() {
         if let context = CoreDataHelper.shared.getCoreDataContext() {
             purchaseOrder = PurchaseOrder(context: context)
+            purchaseOrder?.purchaseOrderNumber = "New Local Order"
+            purchaseOrder?.lastUpdated = Date()
         }
     }
     
+    @objc func reloadData(notification: NSNotification?) {
+        tableView?.reloadData()
+    }
+    
+    @objc func addNewItems(_: Any) {
+        let vc = NewItemViewController()
+        vc.purchaseOrder = purchaseOrder
+        let nav = UINavigationController(rootViewController: vc)
+        self.navigationController?.present(nav, animated: true, completion: nil)
+    }
+    
     @objc func saveOrder(_: Any) {
-        self.dismiss(animated: true, completion: nil)
+        if let count = items?.count, count > 0 {
+            self.dismiss(animated: true, completion: nil)
+            CoreDataHelper.shared.saveCoreDataContext()
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "purchaseOrdersUpdated"), object: nil)
+            self.dismiss(animated: true, completion: nil)
+        } else {
+            let alert = UIAlertController.init(title: nil, message: "Please add items.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction.init(title: "OK", style: .cancel, handler: nil))
+            self.navigationController?.present(alert, animated: true, completion: nil)
+        }
     }
     
     @objc func cancel(_: Any) {
+        CoreDataHelper.shared.deleteFromContext(obj: purchaseOrder)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "purchaseOrdersUpdated"), object: nil)
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -68,8 +97,15 @@ class NewOrderViewController: UIViewController, UITableViewDelegate, UITableView
         return 84
     }
     
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 80
+    }
+    
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return UIView()
+        let addItemsButton = UIButton(type: .system)
+        addItemsButton.addTarget(self, action: #selector(self.addNewItems), for: .touchUpInside)
+        addItemsButton.setTitle("Add New Item", for: .normal)
+        return addItemsButton
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
