@@ -19,11 +19,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        saveContext()
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        saveContext()
+    }
+    
     func syncDataFromServer() {
         let _ = API.getData().done { result in
             CoreDataHelper.shared.syncFromServerIfNeeded(json: result).done{ updated in
                 if updated {
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "didUpdateFromServer"), object: nil)
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "purchaseOrdersUpdated"), object: nil)
                 }
             }
         }
