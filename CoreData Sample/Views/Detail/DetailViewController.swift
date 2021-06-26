@@ -13,10 +13,10 @@ class DetailViewController: UIViewController, UITableViewDelegate, UITableViewDa
     var tableView: UITableView?
     var purchaseOrder: PurchaseOrder?
     var items: Array<Item>? {
-        return purchaseOrder?.items?.allObjects as? Array<Item>
+        return (purchaseOrder?.items?.allObjects as? Array<Item>)?.sorted{ $0.id < $1.id || $0.lastUpdated! > $1.lastUpdated! }
     }
     var invoices: Array<Invoice>? {
-        return purchaseOrder?.invoices?.allObjects as? Array<Invoice>
+        return (purchaseOrder?.invoices?.allObjects as? Array<Invoice>)?.sorted{ $0.id < $1.id }
     }
     
     override func viewDidLoad() {
@@ -26,6 +26,10 @@ class DetailViewController: UIViewController, UITableViewDelegate, UITableViewDa
         initTableView()
         initNavBar()
         NotificationCenter.default.addObserver(self, selector: #selector(self.reloadData), name: NSNotification.Name(rawValue: "newItemAdded") , object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "newItemAdded"), object: nil)
     }
     
     func initTableView() {
