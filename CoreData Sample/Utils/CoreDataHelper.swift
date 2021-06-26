@@ -36,6 +36,21 @@ public class CoreDataHelper {
         return appDelegate.persistentContainer.viewContext
     }
     
+    func saveCoreDataContext() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
+        }
+        appDelegate.saveContext()
+    }
+    
+    func deleteFromContext(obj: NSManagedObject?) {
+        guard let context = getCoreDataContext(), let obj = obj else {
+            return
+        }
+        context.delete(obj)
+        saveCoreDataContext()
+    }
+    
     func getPurchaseOrders() -> Promise<[PurchaseOrder]> {
         let (promise, seal) = Promise<[PurchaseOrder]>.pending()
         if let context = getCoreDataContext() {
@@ -65,11 +80,7 @@ public class CoreDataHelper {
                     updated = true
                 }
             }
-            do {
-                try context.save()
-            } catch let error as NSError {
-                seal.reject(error)
-            }
+            saveCoreDataContext()
             seal.fulfill(updated)
         } else {
             seal.reject(Error.noContext)
