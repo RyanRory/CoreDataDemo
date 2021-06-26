@@ -19,7 +19,11 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         initTableView()
         initNavBar()
         self.reloadData(notification: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.reloadData), name: NSNotification.Name(rawValue: "didUpdateFromServer") , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.reloadData), name: NSNotification.Name(rawValue: "purchaseOrdersUpdated") , object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "purchaseOrdersUpdated"), object: nil)
     }
     
     func initTableView() {
@@ -38,7 +42,7 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     @objc func reloadData(notification: NSNotification?) {
         CoreDataHelper.shared.getPurchaseOrders().done{ orders in
-            self.purchaseOrders = orders
+            self.purchaseOrders = orders.sorted{ $0.lastUpdated! > $1.lastUpdated!}
             self.tableView?.reloadData()
         }
     }
